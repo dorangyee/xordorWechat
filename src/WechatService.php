@@ -11,28 +11,20 @@ enum CacheKey: string
     case wxSessionKey = 'WX:SESSION_KEY:';
 }
 
-enum ErrorMessage: int
-{
-    case CacheError = 20001;
-}
-
 enum WxErrorEnum: int
 {
+    case CacheError = 10000;
     case WxLoginError = 20000;
     case WxNoAppIdOrSecret = 20001;
     case WxCanNotFindSessionKey = 20002;
     case WxCanNotFindAccessToken = 20003;
     case WxCanNotFindPhoneNumber = 20004;
     case WxMsgSecCheckError = 20005;
-}
-
-class ErrorCode
-{
-    public static $OK = 0;
-    public static $IllegalAesKey = -41001;
-    public static $IllegalIv = -41002;
-    public static $IllegalBuffer = -41003;
-    public static $DecodeBase64Error = -41004;
+    case OK = 0;
+    case IllegalAesKey = -41001;
+    case IllegalIv = -41002;
+    case IllegalBuffer = -41003;
+    case DecodeBase64Error = -41004;
 }
 
 class WechatService
@@ -128,7 +120,7 @@ class WechatService
     {
         if (Cache::set(CacheKey::wxSessionKey->value . $openid, $sessionKey, 7100) !== true) {
             Log::error("微信session_key保存异常");
-            throw new \Exception(ErrorMessage::CacheError->name, ErrorMessage::CacheError->value);
+            throw new \Exception(WxErrorEnum::CacheError->name, WxErrorEnum::CacheError->value);
         }
     }
 
@@ -345,13 +337,13 @@ class WechatService
         $sessionKey = $this->getSessionKey($openid);
 
         if (strlen($sessionKey) != 24) {
-            return ErrorCode::$IllegalAesKey;
+            return WxErrorEnum::IllegalAesKey->value;
         }
         $aesKey = base64_decode($sessionKey);
 
 
         if (strlen($iv) != 24) {
-            return ErrorCode::$IllegalIv;
+            return WxErrorEnum::IllegalIv->value;
         }
         $aesIV = base64_decode($iv);
 
@@ -361,12 +353,12 @@ class WechatService
 
         $dataObj = json_decode($result);
         if ($dataObj  == NULL) {
-            return ErrorCode::$IllegalBuffer;
+            return WxErrorEnum::IllegalBuffer->value;
         }
         if ($dataObj->watermark->appid != config('plugin.xordor.wechat.env.wx.appId')) {
-            return ErrorCode::$IllegalBuffer;
+            return WxErrorEnum::IllegalBuffer->value;
         }
         $data = $result;
-        return ErrorCode::$OK;
+        return WxErrorEnum::OK->value;
     }
 }
