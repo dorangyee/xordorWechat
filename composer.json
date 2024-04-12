@@ -2,7 +2,7 @@
   "name": "xordor/wechat",
   "type": "library",
   "license": "MIT",
-  "description": "Webman plugin xordor/wechat",
+  "description": "xordor/wechat",
   "require": {
   },
   "autoload": {
