@@ -5,12 +5,18 @@ namespace Xordor\Wechat;
 use support\Cache;
 use support\Log;
 
+/**
+ * 存储accessToken和sessionKey的缓存键
+ */
 enum CacheKey: string
 {
     case wxAccessToken = 'WX:ACCESS_TOKEN';
     case wxSessionKey = 'WX:SESSION_KEY:';
 }
 
+/**
+ * 错误信息和错误代码
+ */
 enum WxErrorEnum: int
 {
     case CacheError = 10000;
@@ -27,6 +33,9 @@ enum WxErrorEnum: int
     case DecodeBase64Error = -41004;
 }
 
+/**
+ * 微信相关
+ */
 class WechatService
 {
     /**
